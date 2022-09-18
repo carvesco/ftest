@@ -31,11 +31,28 @@ const Roles = (props: any) => {
   }, [props]);
 
   const handleRolesEdit = () => {
-    var data = qs.stringify({
-      groupId: props.groupId,
-      oldValues: oldRoles,
-      newValues: newRoles,
-    });
+    var data;
+    if (oldRoles.length === 0) {
+      data = qs.stringify({
+        groupId: props.groupId,
+        oldValues: ["empty"],
+        newValues: newRoles,
+      });
+    } else if (newRoles.length === 0) {
+      data = qs.stringify({
+        groupId: props.groupId,
+        oldValues: oldRoles,
+        newValues: ["empty"],
+      });
+    } else {
+      data = qs.stringify({
+        groupId: props.groupId,
+        oldValues: oldRoles,
+        newValues: newRoles,
+      });
+    }
+
+    console.log(data);
     axios({
       method: "post",
       url: `https://demo-api-work-test.herokuapp.com/group/manage-roles`,
