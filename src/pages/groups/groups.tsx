@@ -51,7 +51,7 @@ const Groups = () => {
       },
     })
       .then(function (response) {
-        //console.log(response.data);
+        console.log(response.data);
         setGroups(response.data.groups);
       })
       .catch(function (error) {
@@ -196,7 +196,7 @@ const Groups = () => {
                         <Typography variant="h5" sx={{ pl: 3 }}>
                           Roles
                         </Typography>
-                        <Roles groupRoles={item.roles} />
+                        <Roles groupRoles={item.roles} groupId={item.id} token={token} updateGroups={getGroups}/>
                       </Box>
                     </Grid>
                     <Grid item xs={6}>
