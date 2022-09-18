@@ -14,7 +14,6 @@ import { isConstructorDeclaration } from "typescript";
 import { json } from "stream/consumers";
 
 const Roles = (props: any) => {
-  console.log(props);
   const [rolesList, setRolesList] = useState<any[]>([]);
   const [oldRoles, setOldRoles] = useState<any[]>([]);
   const [newRoles, setNewRoles] = useState<any[]>([]);
@@ -98,14 +97,14 @@ const Roles = (props: any) => {
               </>
             }
           >
-            <ListItemText primary={item?.name} />
+            <ListItemText primary={item?.name} sx={{color:"#b4e0e2"}} />
           </ListItem>
         ))}
       </List>
 
       {!isEqual(oldRoles, newRoles) && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="contained" onClick={handleRolesEdit}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" ,pr:2}}>
+          <Button variant="contained" onClick={handleRolesEdit} >
             Confirm Changes
           </Button>
         </Box>

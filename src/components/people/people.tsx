@@ -9,11 +9,8 @@ const People = (props: any) => {
   return (
     <List>
       {peopleList?.map((item, i) => (
-        <ListItem
-          sx={{ pl: 4 }}
-          key={item?.id}
-        >
-          <ListItemText primary={item?.name} />
+        <ListItem sx={{ pl: 4 }} key={item?.id}>
+          <ListItemText primary={item?.name} sx={{ color: "#b4e0e2" }} />
         </ListItem>
       ))}
     </List>

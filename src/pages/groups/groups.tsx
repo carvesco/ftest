@@ -19,6 +19,7 @@ import { ZoomInRounded, DeleteRounded, EditRounded } from "@mui/icons-material";
 import { Console } from "console";
 import Roles from "../../components/roles/roles";
 import People from "../../components/people/people";
+import Divider from "@mui/material/Divider";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -36,7 +37,7 @@ const Groups = () => {
   const location = useLocation();
   const [token, setToken] = useState<string>("");
   const [groups, setGroups] = useState<any[]>([]);
-  const [detailsDrop, setDetailsDrop] = useState("");
+  const [detailsDrop, setDetailsDrop] = useState("none");
   const [editModal, setEditModal] = useState<boolean>(false);
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [editData, setEditData] = useState<any>();
@@ -66,7 +67,7 @@ const Groups = () => {
 
   const showDetails = (groupName: string) => {
     if (detailsDrop === groupName) {
-      setDetailsDrop("");
+      setDetailsDrop("none");
     } else {
       setDetailsDrop(groupName);
     }
@@ -136,9 +137,19 @@ const Groups = () => {
   };
   return (
     <>
-      <Box sx={{ width: "80%", m: "auto", paddingTop: 10 }}>
-        <Typography variant="h2">Groups</Typography>
-        <Box sx={{ bgcolor: "#ffffff", width: "100%", marginTop: 10 }}>
+      <Box sx={{ width: "80%", m: "auto", paddingTop: 8 }}>
+        <Typography variant="h2" color={"primary"}>
+          Groups
+        </Typography>
+        <Box
+          sx={{
+            bgcolor: "background.paper",
+            width: "100%",
+            marginTop: 8,
+            borderRadius: 5,
+          }}
+          color="primary"
+        >
           <List>
             {groups.map((item, i) => (
               <>
@@ -181,6 +192,7 @@ const Groups = () => {
                   }
                 >
                   <ListItemText
+                    sx={{ color: "text.primary" }}
                     primary={item?.name}
                     secondary={item?.description}
                   />
@@ -190,23 +202,39 @@ const Groups = () => {
                   timeout="auto"
                   unmountOnExit
                 >
+                  <Divider variant="middle" sx={{ mb: 2 }} />
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
                       <Box>
-                        <Typography variant="h5" sx={{ pl: 3 }}>
+                        <Typography
+                          variant="h5"
+                          sx={{ pl: 3 }}
+                          color={"text.primary"}
+                        >
                           Roles
                         </Typography>
-                        <Roles groupRoles={item.roles} groupId={item.id} token={token} updateGroups={getGroups}/>
+                        <Roles
+                          groupRoles={item.roles}
+                          groupId={item.id}
+                          token={token}
+                          updateGroups={getGroups}
+                        />
                       </Box>
                     </Grid>
-                    <Grid item xs={6}>
-                      <Typography variant="h5" sx={{ pl: 3 }}>
+                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <Grid item xs={5}>
+                      <Typography
+                        variant="h5"
+                        sx={{ pl: 3 }}
+                        color={"text.primary"}
+                      >
                         People
                       </Typography>
                       <People groupPeople={item.people} />
                     </Grid>
                   </Grid>
                 </Collapse>
+                <Divider />
               </>
             ))}
           </List>
@@ -220,7 +248,12 @@ const Groups = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={modalStyle}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            color={"primary"}
+          >
             Edit Group
           </Typography>
           <TextField
@@ -269,7 +302,7 @@ const Groups = () => {
           </Box>
         </Box>
       </Modal>
-      {/** Modal for editing groups */}
+      {/** Modal for deleting  groups */}
       <Modal
         open={deleteModal}
         onClose={handleCloseDeleteModal}
@@ -289,7 +322,12 @@ const Groups = () => {
             p: 4,
           }}
         >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            color={"primary"}
+          >
             Are you sure you want to delete this group?
           </Typography>
           <Box sx={{ position: "relative", left: "60%" }}>
