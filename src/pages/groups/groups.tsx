@@ -40,6 +40,7 @@ const Groups = () => {
   const [editModal, setEditModal] = useState<boolean>(false);
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [editData, setEditData] = useState<any>();
+  const [idDeleteGroup, setIdDeleteGroup] = useState<string>("");
 
   const getGroups = () => {
     axios({
@@ -81,8 +82,9 @@ const Groups = () => {
   const handleCloseDeleteModal = () => {
     setDeleteModal(false);
   };
-  const openDeleteModal = (data: any) => {
+  const openDeleteModal = (id: any) => {
     setDeleteModal(true);
+    setIdDeleteGroup(id);
   };
 
   /**
@@ -113,9 +115,25 @@ const Groups = () => {
       });
   };
 
-  const handleDeleteGroup = ()=>{
-    
-  }
+  const handleDeleteGroup = () => {
+    axios({
+      method: "delete",
+      url: `https://demo-api-work-test.herokuapp.com/group/delete/?id=${idDeleteGroup}`,
+      headers: {
+        authorization: token,
+      },
+      data: {},
+    })
+      .then(function (response) {
+        console.log(response.data);
+        getGroups();
+        handleCloseDeleteModal();
+      })
+      .catch(function (error) {
+        console.log(error);
+        handleCloseDeleteModal();
+      });
+  };
   return (
     <>
       <Box sx={{ width: "80%", m: "auto", paddingTop: 10 }}>
@@ -153,7 +171,9 @@ const Groups = () => {
                       <IconButton
                         edge="end"
                         aria-label="delete"
-                        onClick={openDeleteModal}
+                        onClick={() => {
+                          openDeleteModal(item.id);
+                        }}
                       >
                         <DeleteRounded />
                       </IconButton>
@@ -273,10 +293,19 @@ const Groups = () => {
             Are you sure you want to delete this group?
           </Typography>
           <Box sx={{ position: "relative", left: "60%" }}>
-            <Button variant="outlined" sx={{ mt: 5 }} onClick={handleCloseDeleteModal}>
+            <Button
+              variant="outlined"
+              sx={{ mt: 5 }}
+              onClick={handleCloseDeleteModal}
+            >
               Cancel
             </Button>
-            <Button variant="contained" color="error" sx={{ mt: 5, ml: 3 }} onClick={handleDeleteGroup}>
+            <Button
+              variant="contained"
+              color="error"
+              sx={{ mt: 5, ml: 3 }}
+              onClick={handleDeleteGroup}
+            >
               Confirm
             </Button>
           </Box>
