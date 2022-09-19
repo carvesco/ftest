@@ -20,6 +20,7 @@ import { Console } from "console";
 import Roles from "../../components/roles/roles";
 import People from "../../components/people/people";
 import Divider from "@mui/material/Divider";
+import { teal } from "@mui/material/colors";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -138,7 +139,7 @@ const Groups = () => {
   return (
     <>
       <Box sx={{ width: "80%", m: "auto", paddingTop: 8 }}>
-        <Typography variant="h2" color={"primary"}>
+        <Typography variant="h1" color={"primary"}>
           Groups
         </Typography>
         <Box
@@ -177,7 +178,11 @@ const Groups = () => {
                           showDetails(item.name);
                         }}
                       >
-                        <ZoomInRounded />
+                        {(detailsDrop===item?.name) ? (
+                          <ZoomInRounded sx={{ color: teal[50] }} />
+                        ) : (
+                          <ZoomInRounded />
+                        )}
                       </IconButton>
                       <IconButton
                         edge="end"
