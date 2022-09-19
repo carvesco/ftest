@@ -12,7 +12,7 @@ import {
 import { isEqual } from "lodash";
 import { isConstructorDeclaration } from "typescript";
 import { json } from "stream/consumers";
-import { showAlertSuccess } from "../alert/alert";
+import { showAlertError, showAlertSuccess } from "../alert/alert";
 
 const Roles = (props: any) => {
   const [rolesList, setRolesList] = useState<any[]>([]);
@@ -67,6 +67,7 @@ const Roles = (props: any) => {
         props.updateGroups();
       })
       .catch(function (error) {
+        showAlertError("Error")
         console.log(error);
       });
   };

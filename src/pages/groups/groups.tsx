@@ -22,10 +22,10 @@ import Roles from "../../components/roles/roles";
 import People from "../../components/people/people";
 import Divider from "@mui/material/Divider";
 import { teal } from "@mui/material/colors";
-import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
+import { styled} from "@mui/material/styles";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
-import { showAlertSuccess } from "../../components/alert/alert";
+import { showAlertError, showAlertSuccess } from "../../components/alert/alert";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -91,6 +91,7 @@ const Groups = () => {
   };
   const openEditModal = (data: any) => {
     setEditModal(true);
+    setDetailsDrop("none")
     setEditData(data);
   };
   const handleCloseDeleteModal = () => {
@@ -98,10 +99,12 @@ const Groups = () => {
     setIdDeleteGroup("");
   };
   const openDeleteModal = (id: any) => {
+    setDetailsDrop("none")
     setDeleteModal(true);
     setIdDeleteGroup(id);
   };
   const closeCreateModal = () => {
+    setDetailsDrop("none")
     setCreateModal(false);
   };
   const openCreateModal = () => {
@@ -130,6 +133,7 @@ const Groups = () => {
       })
       .catch(function (error) {
         console.log(error);
+        showAlertError("Error")
         handleCloseEditModal();
       });
   };
@@ -159,6 +163,7 @@ const Groups = () => {
       })
       .catch(function (error) {
         console.log(error);
+        showAlertError("Error")
         closeCreateModal();
       });
   };
@@ -179,6 +184,7 @@ const Groups = () => {
       })
       .catch(function (error) {
         console.log(error);
+        showAlertError("Error")
         handleCloseDeleteModal();
       });
   };
@@ -259,7 +265,7 @@ const Groups = () => {
                                 });
                               }}
                             >
-                              {editData.id === item?.id ? (
+                              {editData?.id === item?.id ? (
                                 <EditRounded sx={{ color: teal[50] }} />
                               ) : (
                                 <EditRounded />

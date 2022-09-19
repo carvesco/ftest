@@ -10,7 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import { isEqual } from "lodash";
-import { showAlertSuccess } from "../alert/alert";
+import { showAlertError, showAlertSuccess } from "../alert/alert";
 
 const People = (props: any) => {
   const [peopleList, setPeopleList] = useState<any[]>([]);
@@ -65,6 +65,7 @@ const People = (props: any) => {
         props.updateGroups();
       })
       .catch(function (error) {
+        showAlertError("Error")
         console.log(error);
       });
   };
