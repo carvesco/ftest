@@ -178,7 +178,7 @@ const Groups = () => {
                           showDetails(item.name);
                         }}
                       >
-                        {(detailsDrop===item?.name) ? (
+                        {detailsDrop === item?.name ? (
                           <ZoomInRounded sx={{ color: teal[50] }} />
                         ) : (
                           <ZoomInRounded />
@@ -227,7 +227,7 @@ const Groups = () => {
                       </Box>
                     </Grid>
                     <Divider orientation="vertical" variant="middle" flexItem />
-                    <Grid item xs={5}>
+                    <Grid item xs={5.8}>
                       <Typography
                         variant="h5"
                         sx={{ pl: 3 }}
@@ -235,7 +235,12 @@ const Groups = () => {
                       >
                         People
                       </Typography>
-                      <People groupPeople={item.people} />
+                      <People
+                        groupPeople={item.people}
+                        groupId={item.id}
+                        token={token}
+                        updateGroups={getGroups}
+                      />
                     </Grid>
                   </Grid>
                 </Collapse>
