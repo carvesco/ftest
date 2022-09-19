@@ -1,18 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 const Login = () => {
   const navigate = useNavigate();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    let formData = new FormData(event.currentTarget);
+  const [loginData, setLoginData] = useState<any>({ email: "", password: "" });
+  const handleLogin = () => {
+    console.log(loginData);
     var logInData = qs.stringify({
-      'email': formData.get("email") as string,
-      'password': formData.get("pswrd") as string,
+      email: loginData.email,
+      password: loginData.password,
     });
-    console.log(logInData)
     try {
       var config = {
         method: "post",
@@ -20,45 +23,67 @@ const Login = () => {
         headers: {},
         data: logInData,
       };
-      axios(config).then(function(response:any){
+      axios(config).then(function (response: any) {
         console.log(response.data);
-        navigate("/groups",{state:{token:response?.data?.token}});
-      })
+        navigate("/groups", { state: { token: response?.data?.token } });
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div className="w-1/3 border-solid border-2 border-blueTwo rounded-lg  m-auto ">
-      <p className="text-5xl text-center text-blueOne mb-8 mt-8">
+    <Box
+      sx={{
+        width: "50%",
+        margin: "auto",
+        mt: 10,
+        padding: 5,
+        borderWidth: 1,
+        borderRadius: 2,
+        borderColor: "primary.main",
+      }}
+    >
+      <Typography variant="h2" align="center" color={"primary"}>
         Group Management Login
-      </p>
-      <form className="flex flex-col " onSubmit={handleSubmit}>
-        <label className="text-blueOne text-lg w-2/4 m-auto mt-3 flex justify-between">
-          EMAIL
-          <input
-            name="email"
-            type="text"
-            className="border-solid border-2 border-blueTwo rounded-md w-3/5 bg-pinkTwo focus:outline-none"
-          />
-        </label>
-        <label className="text-blueOne text-lg w-2/4 m-auto mt-4 flex justify-between">
-          PASSWORD
-          <input
-            name="pswrd"
-            type="password"
-            className="border-solid border-2 border-blueTwo rounded-md w-3/5 bg-pinkTwo focus:outline-none"
-          />
-        </label>
-        <button
-          type="submit"
-          className="w-2/4 m-auto mt-7 mb-5 border-solid border-2 border-blueTwo rounded-md text-3xl pb-2 text-blueTree bg-blueOne"
+      </Typography>
+      <Box sx={{ display: "flex", flexDirection: "column", mb: 5 }}>
+        <TextField
+          id="outlined-textarea"
+          label="Email"
+          placeholder="Placeholder"
+          sx={{ width: "50%", margin: "auto", mt: 3 }}
+          value={loginData.email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setLoginData((prev: any) => ({
+              ...prev,
+              email: e.target.value,
+            }));
+          }}
+        />
+        <TextField
+          id="outlined-textarea"
+          label="Password"
+          type="password"
+          placeholder="Placeholder"
+          sx={{ width: "50%", margin: "auto", mt: 3 }}
+          value={loginData.password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setLoginData((prev: any) => ({
+              ...prev,
+              password: e.target.value,
+            }));
+          }}
+        />
+        <Button
+          variant="contained"
+          sx={{ width: "40%", margin: "auto", mt: 3 }}
+          onClick={handleLogin}
         >
-          Login
-        </button>
-      </form>
-    </div>
+          <Typography variant="h5">LOGIN</Typography>
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
