@@ -21,6 +21,8 @@ import Roles from "../../components/roles/roles";
 import People from "../../components/people/people";
 import Divider from "@mui/material/Divider";
 import { teal } from "@mui/material/colors";
+import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -29,7 +31,9 @@ const modalStyle = {
   transform: "translate(-50%, -50%)",
   width: 600,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  border: "2px solid",
+  borderColor: "primary.main",
+  borderRadius: 3,
   boxShadow: 24,
   p: 4,
 };
@@ -136,120 +140,155 @@ const Groups = () => {
         handleCloseDeleteModal();
       });
   };
+
+  const GroupList = styled(List)<{ component?: React.ElementType }>({
+    "& .MuiTypography-root": {
+      width: "90%",
+    },
+  });
+
   return (
     <>
-      <Box sx={{ width: "80%", m: "auto", paddingTop: 8 }}>
-        <Typography variant="h1" color={"primary"}>
-          Groups
-        </Typography>
+      {groups.length > 0 ? (
         <Box
           sx={{
-            bgcolor: "background.paper",
-            width: "100%",
-            marginTop: 8,
-            borderRadius: 5,
+            width: "80%",
+            m: "auto",
+            paddingTop: 8,
+            mb:10
           }}
-          color="primary"
         >
-          <List>
-            {groups.map((item, i) => (
-              <>
-                <ListItem
-                  key={item.id}
-                  secondaryAction={
-                    <>
-                      <IconButton
-                        edge="end"
-                        aria-label="edtit"
-                        onClick={() => {
-                          openEditModal({
-                            description: item.description,
-                            name: item.name,
-                            id: item.id,
-                          });
-                        }}
-                      >
-                        <EditRounded />
-                      </IconButton>
-                      <IconButton
-                        edge="end"
-                        aria-label="details"
-                        onClick={() => {
-                          showDetails(item.name);
-                        }}
-                      >
-                        {detailsDrop === item?.name ? (
-                          <ZoomInRounded sx={{ color: teal[50] }} />
-                        ) : (
-                          <ZoomInRounded />
-                        )}
-                      </IconButton>
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => {
-                          openDeleteModal(item.id);
-                        }}
-                      >
-                        <DeleteRounded />
-                      </IconButton>
-                    </>
-                  }
-                >
-                  <ListItemText
-                    sx={{ color: "text.primary" }}
-                    primary={item?.name}
-                    secondary={item?.description}
-                  />
-                </ListItem>
-                <Collapse
-                  in={detailsDrop === item.name}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  <Divider variant="middle" sx={{ mb: 2 }} />
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Box>
+          <Typography variant="h1" color={"primary"}>
+            Groups
+          </Typography>
+          <Box
+            sx={{
+              bgcolor: "background.paper",
+              width: "100%",
+              marginTop: 8,
+              borderRadius: 5,
+              borderWidth: 2,
+              borderColor: "primary.main",
+            }}
+            color="primary"
+          >
+            <GroupList>
+              {groups.map((item, i) => (
+                <>
+                  <ListItem
+                    key={item.id}
+                    secondaryAction={
+                      <>
+                        <IconButton
+                          edge="end"
+                          aria-label="edtit"
+                          onClick={() => {
+                            openEditModal({
+                              description: item.description,
+                              name: item.name,
+                              id: item.id,
+                            });
+                          }}
+                        >
+                          <EditRounded />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          aria-label="details"
+                          onClick={() => {
+                            showDetails(item.name);
+                          }}
+                        >
+                          {detailsDrop === item?.name ? (
+                            <ZoomInRounded sx={{ color: teal[50] }} />
+                          ) : (
+                            <ZoomInRounded />
+                          )}
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            openDeleteModal(item.id);
+                          }}
+                        >
+                          <DeleteRounded />
+                        </IconButton>
+                      </>
+                    }
+                  >
+                    <ListItemText
+                      sx={{ color: "text.primary" }}
+                      primary={item?.name}
+                      secondary={item?.description}
+                    />
+                  </ListItem>
+                  <Collapse
+                    in={detailsDrop === item.name}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <Divider variant="middle" sx={{ mb: 2 }} />
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Box>
+                          <Typography
+                            variant="h5"
+                            sx={{ pl: 3 }}
+                            color={"text.primary"}
+                          >
+                            Roles
+                          </Typography>
+                          <Roles
+                            groupRoles={item.roles}
+                            groupId={item.id}
+                            token={token}
+                            updateGroups={getGroups}
+                          />
+                        </Box>
+                      </Grid>
+                      <Divider
+                        orientation="vertical"
+                        variant="middle"
+                        flexItem
+                      />
+                      <Grid item xs={5.8}>
                         <Typography
                           variant="h5"
                           sx={{ pl: 3 }}
                           color={"text.primary"}
                         >
-                          Roles
+                          People
                         </Typography>
-                        <Roles
-                          groupRoles={item.roles}
+                        <People
+                          groupPeople={item.people}
                           groupId={item.id}
                           token={token}
                           updateGroups={getGroups}
                         />
-                      </Box>
+                      </Grid>
                     </Grid>
-                    <Divider orientation="vertical" variant="middle" flexItem />
-                    <Grid item xs={5.8}>
-                      <Typography
-                        variant="h5"
-                        sx={{ pl: 3 }}
-                        color={"text.primary"}
-                      >
-                        People
-                      </Typography>
-                      <People
-                        groupPeople={item.people}
-                        groupId={item.id}
-                        token={token}
-                        updateGroups={getGroups}
-                      />
-                    </Grid>
-                  </Grid>
-                </Collapse>
-                <Divider />
-              </>
-            ))}
-          </List>
+                  </Collapse>
+                  {i !== groups.length - 1 && <Divider />}
+                </>
+              ))}
+            </GroupList>
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        <Box
+          sx={{
+            width: "50%",
+            m: "auto",
+            display: "flex",
+            justifyContent: "center",
+            mt: 50,
+          }}
+        >
+          <CircularProgress color="primary" />
+        </Box>
+      )}
+
       {/** Modal for editing groups */}
       <Modal
         open={editModal}
@@ -327,7 +366,9 @@ const Groups = () => {
             transform: "translate(-50%, -50%)",
             width: 600,
             bgcolor: "background.paper",
-            border: "2px solid #000",
+            border: "2px solid ",
+            borderColor: "primary.main",
+            borderRadius: 3,
             boxShadow: 24,
             p: 4,
           }}

@@ -96,7 +96,11 @@ const People = (props: any) => {
               </>
             }
           >
-            <ListItemText primary={item?.name} sx={{ color: "#b4e0e2" }} />
+            {peopleList[i].active ? (
+              <ListItemText primary={item?.name} sx={{ color: "primary.main" }} />
+            ) : (
+              <ListItemText primary={item?.name} sx={{ color: "#b4e0e2" }} />
+            )}
           </ListItem>
         ))}
       </List>

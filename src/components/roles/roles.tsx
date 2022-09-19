@@ -97,14 +97,18 @@ const Roles = (props: any) => {
               </>
             }
           >
-            <ListItemText primary={item?.name} sx={{color:"#b4e0e2"}} />
+            {rolesList[i].active ? (
+              <ListItemText primary={item?.name} sx={{ color: "primary.main" }} />
+            ) : (
+              <ListItemText primary={item?.name} sx={{ color: "#b4e0e2" }} />
+            )}
           </ListItem>
         ))}
       </List>
 
       {!isEqual(oldRoles, newRoles) && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end" ,pr:2}}>
-          <Button variant="contained" onClick={handleRolesEdit} >
+        <Box sx={{ display: "flex", justifyContent: "flex-end", pr: 2 }}>
+          <Button variant="contained" onClick={handleRolesEdit}>
             Confirm Changes
           </Button>
         </Box>
