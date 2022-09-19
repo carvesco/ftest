@@ -16,13 +16,16 @@ import {
   Button,
 } from "@mui/material";
 import { ZoomInRounded, DeleteRounded, EditRounded } from "@mui/icons-material";
-import { Console } from "console";
+import AddIcon from "@mui/icons-material/Add";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Roles from "../../components/roles/roles";
 import People from "../../components/people/people";
 import Divider from "@mui/material/Divider";
 import { teal } from "@mui/material/colors";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
+import { showAlertSuccess } from "../../components/alert/alert";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -45,8 +48,14 @@ const Groups = () => {
   const [detailsDrop, setDetailsDrop] = useState("none");
   const [editModal, setEditModal] = useState<boolean>(false);
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
+  const [createModal, setCreateModal] = useState<boolean>(false);
   const [editData, setEditData] = useState<any>();
+  const [createData, setCreateData] = useState({
+    name: "",
+    description: "",
+  });
   const [idDeleteGroup, setIdDeleteGroup] = useState<string>("");
+  const navigate = useNavigate();
 
   const getGroups = () => {
     axios({
@@ -57,7 +66,6 @@ const Groups = () => {
       },
     })
       .then(function (response) {
-        console.log(response.data);
         setGroups(response.data.groups);
       })
       .catch(function (error) {
@@ -66,7 +74,6 @@ const Groups = () => {
   };
   useEffect(() => {
     setToken(location.state.token);
-    //console.log(token);
     getGroups();
   }, [location, token]);
 
@@ -80,6 +87,7 @@ const Groups = () => {
 
   const handleCloseEditModal = () => {
     setEditModal(false);
+    setEditData({ id: "", name: "", description: "" });
   };
   const openEditModal = (data: any) => {
     setEditModal(true);
@@ -87,17 +95,22 @@ const Groups = () => {
   };
   const handleCloseDeleteModal = () => {
     setDeleteModal(false);
+    setIdDeleteGroup("");
   };
   const openDeleteModal = (id: any) => {
     setDeleteModal(true);
     setIdDeleteGroup(id);
   };
-
+  const closeCreateModal = () => {
+    setCreateModal(false);
+  };
+  const openCreateModal = () => {
+    setCreateModal(true);
+  };
   /**
     Handle edit submition
   */
   const handleEditSubmit = () => {
-    //console.log(editData);
     var data = qs.stringify({
       name: editData.name,
       description: editData.description,
@@ -111,13 +124,42 @@ const Groups = () => {
       data: data,
     })
       .then(function (response) {
-        console.log(response.data);
         getGroups();
+        showAlertSuccess("Edited", "the group was edited succesfully");
         handleCloseEditModal();
       })
       .catch(function (error) {
         console.log(error);
         handleCloseEditModal();
+      });
+  };
+
+  /**
+    Handle create submition
+  */
+  const handleCreateSubmit = () => {
+    //console.log(editData);
+
+    var data = qs.stringify({
+      name: createData.name,
+      description: createData.description,
+    });
+    axios({
+      method: "post",
+      url: `https://demo-api-work-test.herokuapp.com/group/create`,
+      headers: {
+        authorization: token,
+      },
+      data: data,
+    })
+      .then(function (response) {
+        getGroups();
+        showAlertSuccess("Created", "the group was created succesfully");
+        closeCreateModal();
+      })
+      .catch(function (error) {
+        console.log(error);
+        closeCreateModal();
       });
   };
 
@@ -131,8 +173,8 @@ const Groups = () => {
       data: {},
     })
       .then(function (response) {
-        console.log(response.data);
         getGroups();
+        showAlertSuccess("Deleted", "the group was deleted succesfully");
         handleCloseDeleteModal();
       })
       .catch(function (error) {
@@ -147,146 +189,185 @@ const Groups = () => {
     },
   });
 
+  const handleLogOut = () => {
+    setToken("");
+    console.log(token);
+    navigate("/login");
+  };
+
   return (
     <>
-      {groups.length > 0 ? (
-        <Box
-          sx={{
-            width: "80%",
-            m: "auto",
-            paddingTop: 8,
-            mb:10
-          }}
-        >
-          <Typography variant="h1" color={"primary"}>
-            Groups
-          </Typography>
-          <Box
-            sx={{
-              bgcolor: "background.paper",
-              width: "100%",
-              marginTop: 8,
-              borderRadius: 5,
-              borderWidth: 2,
-              borderColor: "primary.main",
-            }}
-            color="primary"
-          >
-            <GroupList>
-              {groups.map((item, i) => (
-                <>
-                  <ListItem
-                    key={item.id}
-                    secondaryAction={
-                      <>
-                        <IconButton
-                          edge="end"
-                          aria-label="edtit"
-                          onClick={() => {
-                            openEditModal({
-                              description: item.description,
-                              name: item.name,
-                              id: item.id,
-                            });
-                          }}
-                        >
-                          <EditRounded />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="details"
-                          onClick={() => {
-                            showDetails(item.name);
-                          }}
-                        >
-                          {detailsDrop === item?.name ? (
-                            <ZoomInRounded sx={{ color: teal[50] }} />
-                          ) : (
-                            <ZoomInRounded />
-                          )}
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => {
-                            openDeleteModal(item.id);
-                          }}
-                        >
-                          <DeleteRounded />
-                        </IconButton>
-                      </>
-                    }
-                  >
-                    <ListItemText
-                      sx={{ color: "text.primary" }}
-                      primary={item?.name}
-                      secondary={item?.description}
-                    />
-                  </ListItem>
-                  <Collapse
-                    in={detailsDrop === item.name}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <Divider variant="middle" sx={{ mb: 2 }} />
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Box>
-                          <Typography
-                            variant="h5"
-                            sx={{ pl: 3 }}
-                            color={"text.primary"}
-                          >
-                            Roles
-                          </Typography>
-                          <Roles
-                            groupRoles={item.roles}
-                            groupId={item.id}
-                            token={token}
-                            updateGroups={getGroups}
-                          />
-                        </Box>
-                      </Grid>
-                      <Divider
-                        orientation="vertical"
-                        variant="middle"
-                        flexItem
-                      />
-                      <Grid item xs={5.8}>
-                        <Typography
-                          variant="h5"
-                          sx={{ pl: 3 }}
-                          color={"text.primary"}
-                        >
-                          People
-                        </Typography>
-                        <People
-                          groupPeople={item.people}
-                          groupId={item.id}
-                          token={token}
-                          updateGroups={getGroups}
+      {token !== "none" ? (
+        <>
+          {groups.length > 0 ? (
+            <Box
+              sx={{
+                width: "80%",
+                m: "auto",
+                paddingTop: 8,
+                mb: 10,
+              }}
+            >
+              <Typography variant="h1" color={"primary"}>
+                Groups
+              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                  sx={{ mr: 3 }}
+                  variant="contained"
+                  endIcon={<AddIcon />}
+                  color="secondary"
+                  onClick={openCreateModal}
+                >
+                  New Group
+                </Button>
+                <Button
+                  variant="contained"
+                  endIcon={<LogoutIcon />}
+                  color="primary"
+                  onClick={handleLogOut}
+                >
+                  Log Out
+                </Button>
+              </Box>
+              <Box
+                sx={{
+                  bgcolor: "background.paper",
+                  width: "100%",
+                  marginTop: 2,
+                  borderRadius: 5,
+                  borderWidth: 2,
+                  borderColor: "primary.main",
+                }}
+                color="primary"
+              >
+                <GroupList>
+                  {groups.map((item, i) => (
+                    <>
+                      <ListItem
+                        key={item.id}
+                        secondaryAction={
+                          <>
+                            <IconButton
+                              edge="end"
+                              aria-label="edtit"
+                              onClick={() => {
+                                openEditModal({
+                                  description: item.description,
+                                  name: item.name,
+                                  id: item.id,
+                                });
+                              }}
+                            >
+                              {editData.id === item?.id ? (
+                                <EditRounded sx={{ color: teal[50] }} />
+                              ) : (
+                                <EditRounded />
+                              )}
+                            </IconButton>
+                            <IconButton
+                              edge="end"
+                              aria-label="details"
+                              onClick={() => {
+                                showDetails(item.name);
+                              }}
+                            >
+                              {detailsDrop === item?.name ? (
+                                <ZoomInRounded sx={{ color: teal[50] }} />
+                              ) : (
+                                <ZoomInRounded />
+                              )}
+                            </IconButton>
+                            <IconButton
+                              edge="end"
+                              aria-label="delete"
+                              onClick={() => {
+                                openDeleteModal(item.id);
+                              }}
+                            >
+                              {idDeleteGroup === item?.id ? (
+                                <DeleteRounded sx={{ color: teal[50] }} />
+                              ) : (
+                                <DeleteRounded />
+                              )}
+                            </IconButton>
+                          </>
+                        }
+                      >
+                        <ListItemText
+                          sx={{ color: "text.primary" }}
+                          primary={item?.name}
+                          secondary={item?.description}
                         />
-                      </Grid>
-                    </Grid>
-                  </Collapse>
-                  {i !== groups.length - 1 && <Divider />}
-                </>
-              ))}
-            </GroupList>
-          </Box>
-        </Box>
+                      </ListItem>
+                      <Collapse
+                        in={detailsDrop === item.name}
+                        timeout="auto"
+                        unmountOnExit
+                      >
+                        <Divider variant="middle" sx={{ mb: 2 }} />
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Box>
+                              <Typography
+                                variant="h5"
+                                sx={{ pl: 3 }}
+                                color={"text.primary"}
+                              >
+                                Roles
+                              </Typography>
+                              <Roles
+                                groupRoles={item.roles}
+                                groupId={item.id}
+                                token={token}
+                                updateGroups={getGroups}
+                              />
+                            </Box>
+                          </Grid>
+                          <Divider
+                            orientation="vertical"
+                            variant="middle"
+                            flexItem
+                          />
+                          <Grid item xs={5.8}>
+                            <Typography
+                              variant="h5"
+                              sx={{ pl: 3 }}
+                              color={"text.primary"}
+                            >
+                              People
+                            </Typography>
+                            <People
+                              groupPeople={item.people}
+                              groupId={item.id}
+                              token={token}
+                              updateGroups={getGroups}
+                            />
+                          </Grid>
+                        </Grid>
+                      </Collapse>
+                      {i !== groups.length - 1 && <Divider />}
+                    </>
+                  ))}
+                </GroupList>
+              </Box>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                width: "50%",
+                m: "auto",
+                display: "flex",
+                justifyContent: "center",
+                mt: 50,
+              }}
+            >
+              <CircularProgress color="primary" />
+            </Box>
+          )}
+        </>
       ) : (
-        <Box
-          sx={{
-            width: "50%",
-            m: "auto",
-            display: "flex",
-            justifyContent: "center",
-            mt: 50,
-          }}
-        >
-          <CircularProgress color="primary" />
-        </Box>
+        <>No TOKEN</>
       )}
 
       {/** Modal for editing groups */}
@@ -394,6 +475,68 @@ const Groups = () => {
               color="error"
               sx={{ mt: 5, ml: 3 }}
               onClick={handleDeleteGroup}
+            >
+              Confirm
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      {/** Modal for creating  groups */}
+      <Modal
+        open={createModal}
+        onClose={closeCreateModal}
+        aria-labelledby="create-modal-title"
+        aria-describedby="create-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography
+            id="create-modal-title"
+            variant="h6"
+            component="h2"
+            color={"primary"}
+          >
+            Create Group
+          </Typography>
+          <TextField
+            id="outlined-multiline-flexible"
+            label="Name"
+            sx={{ width: "100%", mt: 3 }}
+            multiline
+            maxRows={4}
+            value={createData?.name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setCreateData((prev: any) => ({
+                ...prev,
+                name: e.target.value,
+              }));
+            }}
+          />
+          <TextField
+            id="outlined-multiline-flexible"
+            label="Description"
+            sx={{ width: "100%", mt: 3 }}
+            multiline
+            rows={8}
+            value={createData?.description}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setCreateData((prev: any) => ({
+                ...prev,
+                description: e.target.value,
+              }));
+            }}
+          />
+          <Box sx={{ position: "relative", left: "60%" }}>
+            <Button
+              variant="outlined"
+              sx={{ mt: 5 }}
+              onClick={closeCreateModal}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ mt: 5, ml: 3 }}
+              onClick={handleCreateSubmit}
             >
               Confirm
             </Button>

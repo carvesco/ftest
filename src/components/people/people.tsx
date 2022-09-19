@@ -10,6 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import { isEqual } from "lodash";
+import { showAlertSuccess } from "../alert/alert";
 
 const People = (props: any) => {
   const [peopleList, setPeopleList] = useState<any[]>([]);
@@ -60,6 +61,7 @@ const People = (props: any) => {
     })
       .then(function (response) {
         console.log(response.data);
+        showAlertSuccess("Edited", "the people were edited succesfully");
         props.updateGroups();
       })
       .catch(function (error) {

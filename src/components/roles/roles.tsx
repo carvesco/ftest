@@ -12,6 +12,7 @@ import {
 import { isEqual } from "lodash";
 import { isConstructorDeclaration } from "typescript";
 import { json } from "stream/consumers";
+import { showAlertSuccess } from "../alert/alert";
 
 const Roles = (props: any) => {
   const [rolesList, setRolesList] = useState<any[]>([]);
@@ -62,6 +63,7 @@ const Roles = (props: any) => {
     })
       .then(function (response) {
         console.log(response.data);
+        showAlertSuccess("Edited", "the roles were edited succesfully");
         props.updateGroups();
       })
       .catch(function (error) {

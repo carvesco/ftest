@@ -16,20 +16,25 @@ const Login = () => {
       email: loginData.email,
       password: loginData.password,
     });
-    try {
-      var config = {
-        method: "post",
-        url: "https://demo-api-work-test.herokuapp.com/login",
-        headers: {},
-        data: logInData,
-      };
-      axios(config).then(function (response: any) {
+    var config = {
+      method: "post",
+      url: "https://demo-api-work-test.herokuapp.com/login",
+      headers: {},
+      data: logInData,
+    };
+    axios(config)
+      .then(function (response: any) {
         console.log(response.data);
-        navigate("/groups", { state: { token: response?.data?.token } });
+        if (response?.data?.token) {
+          var tok: string = response?.data?.token
+          navigate("/groups", { state: { token:tok } });
+          tok = ""
+        } else {
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (

@@ -37,6 +37,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/groups" element={<Groups />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </ThemeProvider>
   );
